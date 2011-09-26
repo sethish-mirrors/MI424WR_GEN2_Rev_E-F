@@ -1,0 +1,97 @@
+HOW TO BUILD A FIRMWARE FOR THE ACTIONTEC MC524 Router (MI424WR-GEN2 REV E/F)
+
+* How to install the MC524 source code onto the Linux workstation
+* How to build the image file that can be loaded on to a Actiontec MC524WR
+* How to upgrade the MC524 with the new firmware image file.
+
+NOTE: The following procedures are known to work with recent versions of Fedora, like versions 10 and 11. Along with the Basic Fedora Install you will want to add the Software Developement packages that are provided with Fedora. 
+
+The Actiontec MI424WR Rev. E & F Source Code, i386-jungo-linux-gnu compiler, mips64-octeon-toolchain and jpkg can be obtained from the Actiontec support website at http://opensource.actiontec.com.
+
+1. (Download source code, compilers and toolchain (4 files))
+
+ actiontec_opensrc_mi424wr-rev-e-f_fw-20-10-7-5.tar.gz
+ i386-jungo-linux-gnu.tar.gz
+ toolchain-mips64-octeon_20070905.jpkg
+ jpkg
+ 
+2. (Copy or Move the source code to the HOME directory.)
+
+$ cp actiontec_opensrc_mi424wr-rev-e-f_fw-20-10-7-5.tar.gz $HOME
+
+3. (Change to the Home directory) 
+
+$ cd $HOME
+
+4. (Extract the contents of the source code)
+
+$ tar zxvf actiontec_opensrc_mi424wr-rev-e-f_fw-20-10-7-5.tar.gz
+
+IMPORTANT: Extracting the source code creates the directory "opensource-mc524" and the subdirectory "rg". The bulk of the source code resides in "rg". The Makefiles in the distribution expects that Jungo's openrg GCC 3.3.2 based compiler will be located at "/usr/local/openrg". Both the x86 (i386-jungo-linux-gnu) and MIPS (mips64-octeon-linux-gnu) compilers should be installed to the "openrg" directory.
+
+5. (The following commands assume that the User is still in the Home directory.) 
+
+6. (Change to Super User for the following commands, requires the root password)
+
+$ su - 
+PASSWORD:
+
+7. (Create the "openrg" directory at "/usr/local")
+
+# mkdir /usr/local/openrg
+
+8. (Move the compiler, toolchain and "jpkg" to the "openrg" directory.)
+
+# mv i386-jungo-linux-gnu.tar.gz /usr/local/openrg
+# mv jpkg /usr/local/openrg
+# mv toolchain-mips64-octeon_20070905.jpkg /usr/local/openrg
+
+9. (Change to the "openrg" directory)
+
+# cd /usr/local/openrg
+
+10.(Extract the contents of the i386-jungo-linux-gnu compiler)
+
+# tar zxvf i386-jungo-linux-gnu.tar.gz 
+
+11.(Install and prepare the toolchain)
+
+# ./jpkg -x -C / toolchain-mips64-octeon_20070905.jpkg
+
+12.(Change to the original Home directory, the place-holder called <account>, represents the name of the account you were using before you changed to Super User, earlier in these directions. If your login is "bobby", then there will be a directory within the Home directory named "bobby", and that is where you will find the "/opensource-mc524/rg" directory. If so, the command would look like this: "cd /home/bobby/opensource-mc524/rg".)
+
+# cd /home/<account>/opensource-mc524/rg
+
+13.(When you have changed to the "rg" directory, the following command will build the new image.)
+
+# make config CONFIG_RG_GPL=y DIST=MC524WR LIC=../jpkg_actiontec_gpl.lic && make
+
+
+
+HOW TO UPLOAD THE IMAGE TO THE ROUTER
+
+IMPORTANT: In order to load the firmware onto the router, the user will need a serial debug board and a TFTP server.
+
+1. Set up the TFTP server, copy the newly created "vmlinux" file from the build to TFTP server folder.
+
+2. Boot up the Router with serial debug connected to PC. 
+
+3. Press Enter continuously to enter bootloader prompt.
+
+4. Set environment variables (if they're not set) to load from tftp:
+
+    set serverip <TFTP server IP>
+
+    set ipaddr <IP address>
+
+5. Load the firmware using TFTP:
+
+    run small_ram
+
+    tftp 0x5000000 vmlinux
+
+6. Run boot command:
+
+    bootoctlinux 0x5000000 numcores=2
+
+PLEASE NOTE: The machine-readable software source code provided here is for programmers who may wish to alter or customize the code, and typically will not be of use to the vast majority of consumers. The software source code provided here is subject to Version 2 of the GPL or other GPL or LGPL licenses which are all included in the download and are available below and also at "http://www.gnu.org/licenses/" and as such, the software source code is distributed WITHOUT ANY WARRANTY and subject to the copyrights of the authors. Compiling errors due to lack of public libraries/tools in the customer's specific platform/OS are the responsibility of the user of this GPL source code.

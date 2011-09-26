@@ -1,0 +1,5 @@
+
+STG: Please enter the description for patch "wps_config.h" above.
+STG: Lines prefixed with "STG:" will be automatically removed.
+STG: Trailing empty lines will be automatically removed.
+STG: vi: set textwidth=75 filetype=diff nobackup:

@@ -1,0 +1,14 @@
+RGSRC=../..
+include $(RGSRC)/envir.mak
+
+ifeq ($(CONFIG_ATHEROS_AR531X_MIPS),)
+  SUBDIRS+=madwifi_org
+endif
+
+SUBDIRS+=$(if $(CONFIG_ATHEROS_AR531X_MIPS),ar531x)
+SUBDIRS+=$(if $(CONFIG_RG_ATHEROS_HW_AR5212),madwifi)
+SUBDIRS+=$(if $(CONFIG_RG_ATHEROS_HW_AR5416),AR5008)
+
+JPKG_EXPORTED_DIR_SRC+=madwifi AR5008
+
+include $(RGMK)
